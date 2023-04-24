@@ -28,51 +28,38 @@ public class ComuneCodiceMapper {
 
         try {
             xmlif = XMLInputFactory.newInstance();
-            xmlr = xmlif.createXMLStreamReader(
-                "inputXmlFiles/Comuni.xml",
-                new FileInputStream("inputXmlFiles/Comuni.xml"));
+            xmlr = xmlif.createXMLStreamReader("inputXmlFiles/Comuni.xml", new FileInputStream("inputXmlFiles/Comuni.xml"));
 
-                String nome = null;
-                String codice = null;
-                String currentTag = null; 
+            while (xmlr.hasNext()) { 
+                if(xmlr.getEventType() == XMLStreamConstants.START_ELEMENT && xmlr.getLocalName().equals("comune")) {
 
+                    String nome = null;
+                    String codice = null;
 
-                while (xmlr.hasNext()) { 
-                    switch (xmlr.getEventType()) {
-                        // continua a leggere finché ha eventi a disposizione // switch sul tipo di evento
-                        case XMLStreamConstants.START_DOCUMENT: // inizio del documento: stampa che inizia il documento
-                            System.out.println("Start Read Doc "); 
-                            break;
-                        case XMLStreamConstants.START_ELEMENT: // inizio di un elemento: stampa il nome del tag e i suoi attributi
-                            if(xmlr.getLocalName().equals("nome")) {
-                                currentTag = "nome";
-                            } else if(xmlr.getLocalName().equals("codice")) {
-                                currentTag = "codice";
-                            }
-                            break;
-                        case XMLStreamConstants.END_ELEMENT: // fine di un elemento: stampa il nome del tag chiuso
-                            if("comune".equals(xmlr.getLocalName())) {
-                                System.out.println(nome + " - " + codice);
-                                comuneCodiceMap.put(nome, codice);
-                            }
-                            break;
-                        case XMLStreamConstants.CHARACTERS: 
-                            if (xmlr.getText().trim().length() > 0)
-                                if("nome".equals(currentTag)) {
-                                    nome = xmlr.getText();
-                                } else if("codice".equals(currentTag)) {
-                                    codice = xmlr.getText();
-                                }
-                            
+                    while(true) {
+                        if(xmlr.getEventType() == XMLStreamConstants.START_ELEMENT && xmlr.getLocalName().equals("nome")) {
+                            xmlr.next();
+                            nome = xmlr.getText();
+                        } else if(xmlr.getEventType() == XMLStreamConstants.START_ELEMENT && xmlr.getLocalName().equals("codice")) {
+                            xmlr.next();
+                            codice = xmlr.getText();
+                            comuneCodiceMap.put(nome, codice);
                             break;
 
-                    } xmlr.next();
+                        } else {
+                            xmlr.next();
+                        }
+                    }
                 }
+
+                xmlr.next();
+            } 
 
         } catch (Exception e) {
             System.out.println("Errore nell'inizializzazione del reader:");
             System.out.println(e.getMessage());
         }
     }
+
 
 }
