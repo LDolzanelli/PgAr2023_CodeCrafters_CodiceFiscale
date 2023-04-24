@@ -8,13 +8,14 @@ public class CodiceFiscale {
     private char codiceMese;
     private String codiceLuogo;
     private char codiceControllo;
-    private char sesso;
 
-    public CodiceFiscale(String nome, String cognome, char sesso) {
-
+    public CodiceFiscale(String nome, String cognome, String dataDiNascita, char sesso) {
         generaCodiceNome(nome);
         generaCodiceCognome(cognome);
-        this.sesso = sesso;
+        generaCodiceAnno(dataDiNascita);
+        generaCodiceMese(dataDiNascita);
+        generaCodiceGiorno(dataDiNascita, sesso);
+
 
     }
 
@@ -108,6 +109,42 @@ public class CodiceFiscale {
         }
     }
 
+    private void generaCodiceAnno(String dataDiNascita) {
+        //vengono presi i valori da indice 2 a 4 escluso della data di nascita e convertiti in int
+        codiceAnno = Integer.parseInt(dataDiNascita.substring(2, 4));
+    }
+
+    private void generaCodiceMese(String dataDiNascita) {
+        enum LetteraMese {
+            A, B, C, D, E, H, L, M, P, R, S, T
+        }
+
+        //converte in int la data di nascita da posizione 5 a 7 esclusa
+        int meseDiNascita = Integer.parseInt(dataDiNascita.substring(5, 7));
+
+        //l'int viene usato come indice per accedere al valore Enum desiderato, viene poi convertito in char
+        codiceMese = LetteraMese.values()[meseDiNascita - 1].toString().charAt(0);
+    }
+
+    private void generaCodiceGiorno(String dataDiNascita, char sesso) {
+        //converte in int le ultime due cifre della data di nascita
+        int giornoDiNascita = Integer.parseInt(dataDiNascita.substring(8, 10));
+
+        //a seconda del sesso viene assegnato il giorno di nascita
+        if(sesso == 'M') {
+            codiceGiorno = giornoDiNascita;
+        }
+        else {
+            codiceGiorno = giornoDiNascita + 40;
+        }
+    }
+
+    public String getDataDiNascita() {
+        String dataDiNascita = codiceAnno + "" +  codiceMese + "" + codiceGiorno;
+        return dataDiNascita;
+    }
+
+
     private boolean isConsonante(char carattere) {
         if (carattere == 'A' || carattere == 'E' || carattere == 'I' || carattere == 'O' || carattere == 'U') {
             return false;
@@ -116,4 +153,5 @@ public class CodiceFiscale {
         }
     }
 
+    
 }
