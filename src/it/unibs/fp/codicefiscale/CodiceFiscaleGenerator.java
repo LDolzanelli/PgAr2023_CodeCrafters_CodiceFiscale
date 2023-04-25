@@ -1,9 +1,14 @@
 package it.unibs.fp.codicefiscale;
 
+import java.io.FileInputStream;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
 public class CodiceFiscaleGenerator {
 
     public static String generaCodiceFiscale(String cognome, String nome, String dataDiNascita, char sesso,
-        String comune) {
+            String comune) {
         StringBuffer codiceFiscale = new StringBuffer();
 
         codiceFiscale.append(generaCodiceCognome(cognome));
@@ -11,8 +16,7 @@ public class CodiceFiscaleGenerator {
         codiceFiscale.append(generaCodiceAnno(dataDiNascita));
         codiceFiscale.append(generaCodiceMese(dataDiNascita));
         codiceFiscale.append(generaCodiceGiorno(dataDiNascita, sesso));
-        codiceFiscale.append(generaCodiceLuogo(comune));
-
+        codiceFiscale.append(generaCodiceComune(comune));
 
         return codiceFiscale.toString();
     }
@@ -113,7 +117,8 @@ public class CodiceFiscaleGenerator {
     }
 
     private static int generaCodiceAnno(String dataDiNascita) {
-        //vengono presi i valori da indice 2 a 4 escluso della data di nascita e convertiti in int
+        // vengono presi i valori da indice 2 a 4 escluso della data di nascita e
+        // convertiti in int
         int codiceAnno = Integer.parseInt(dataDiNascita.substring(2, 4));
         return codiceAnno;
     }
@@ -123,34 +128,32 @@ public class CodiceFiscaleGenerator {
             A, B, C, D, E, H, L, M, P, R, S, T
         }
 
-        //converte in int la data di nascita da posizione 5 a 7 esclusa
+        // converte in int la data di nascita da posizione 5 a 7 esclusa
         int meseDiNascita = Integer.parseInt(dataDiNascita.substring(5, 7));
 
-        //l'int viene usato come indice per accedere al valore Enum desiderato, viene poi convertito in char
+        // l'int viene usato come indice per accedere al valore Enum desiderato, viene
+        // poi convertito in char
         char codiceMese = LetteraMese.values()[meseDiNascita - 1].toString().charAt(0);
 
         return codiceMese;
     }
 
     private static int generaCodiceGiorno(String dataDiNascita, char sesso) {
-        //converte in int le ultime due cifre della data di nascita
+        // converte in int le ultime due cifre della data di nascita
         int codiceGiorno = Integer.parseInt(dataDiNascita.substring(8, 10));
 
-        //a seconda del sesso viene assegnato il giorno di nascita
-        if(sesso == 'M') {
+        // a seconda del sesso viene assegnato il giorno di nascita
+        if (sesso == 'M') {
             return codiceGiorno;
-        }
-        else {
+        } else {
             return codiceGiorno + 40;
         }
     }
 
-
     public static String getDataDiNascita(int codiceAnno, char codiceMese, int codiceGiorno) {
-        String dataDiNascita = codiceAnno + "" +  codiceMese + "" + codiceGiorno;
+        String dataDiNascita = codiceAnno + "" + codiceMese + "" + codiceGiorno;
         return dataDiNascita;
     }
-
 
     private static boolean isConsonante(char carattere) {
         if (carattere == 'A' || carattere == 'E' || carattere == 'I' || carattere == 'O' || carattere == 'U') {
@@ -160,7 +163,48 @@ public class CodiceFiscaleGenerator {
         }
     }
 
-    public static Object generaCodiceLuogo(String comune) {
-        return ComuneCodiceMapper.getCodiceComune(comune);
+    private static String generaCodiceComune(String comune) {
+        XMLInputFactory xmlif = null;
+        XMLStreamReader xmlr = null;
+
+        try {
+            xmlif = XMLInputFactory.newInstance();
+            xmlr = xmlif.createXMLStreamReader("inputXmlFiles/Comuni.xml",
+                    new FileInputStream("inputXmlFiles/Comuni.xml"));
+
+            String nomeComune = "";
+            String codiceComune = "";
+
+            boolean trovato = false;
+
+            while (xmlr.hasNext() && !trovato) {     
+                xmlr.nextTag();        
+                if (xmlr.isStartElement() && xmlr.getLocalName().equals("nome")) {
+                    nomeComune = xmlr.getElementText();
+                    xmlr.nextTag();  
+                }
+
+                if (xmlr.isStartElement() && xmlr.getLocalName().equals("codice")) {
+                    codiceComune = xmlr.getElementText();
+                    xmlr.nextTag();  
+                }
+                if (nomeComune.equalsIgnoreCase(comune)) {
+                    trovato = true;
+                }
+            }
+
+            if (trovato) {
+                return codiceComune;
+            } else {
+                return "XXXX";
+            }
+
+        } catch (Exception e) {
+            System.out.println("Errore nell'inizializzazione del reader:");
+            System.out.println(e.getMessage());
+            return "XXXX";
+        }
+
     }
+
 }
