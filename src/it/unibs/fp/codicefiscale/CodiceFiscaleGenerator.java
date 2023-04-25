@@ -22,19 +22,20 @@ public class CodiceFiscaleGenerator {
         return codiceFiscale.toString();
     }
 
-    private static String generaCodiceNome(String nome) {
-        // per evitare errori di input
+    /**
+     * Metodo che genera il codice (di tre lettere) del nome 
+     * @param nome nome del quale di vuole generare il codice
+     * @return codice di tre lettere generato
+     */
+     private static String generaCodiceNome(String nome) {
+        nome = nome.toUpperCase().trim(); // per evitare errori di input
         StringBuffer codiceNome = new StringBuffer();
-        nome = nome.toUpperCase();
-        nome = nome.trim();
-
         StringBuffer nomeSenzaVocali = new StringBuffer();
 
         for (int i = 0; i < nome.length(); i++) {
             if (isConsonante(nome.charAt(i))) {
                 nomeSenzaVocali.append(nome.charAt(i));
             }
-
         }
 
         if (nomeSenzaVocali.length() >= 4) {
@@ -43,41 +44,28 @@ public class CodiceFiscaleGenerator {
                     codiceNome.append(nomeSenzaVocali.charAt(i));
                 }
             }
-        } else if (nomeSenzaVocali.length() == 3) {
+        } 
+
+        else if (nomeSenzaVocali.length() == 3) {
             codiceNome = nomeSenzaVocali;
-        } else {
-            codiceNome = nomeSenzaVocali;
-            if (nome.length() > 2) {
-
-                for (int i = 0; codiceNome.length() != 3; i++) {
-                    if (!isConsonante(nome.charAt(i))) {
-                        codiceNome.append(nome.charAt(i));
-                    }
-
-                }
-            } else {
-                for (int i = 0; codiceNome.length() != 3; i++) {
-                    if ((i + 1) <= nome.length() && !isConsonante(nome.charAt(i))) {
-                        codiceNome.append(nome.charAt(i));
-                    }
-
-                    if ((i + 1) > nome.length()) {
-                        codiceNome.append('X');
-                    }
-
-                }
-            }
+        } 
+        
+        else {
+            codiceNome = menoDiTreConsonanti(nome, nomeSenzaVocali);
         }
+
         return codiceNome.toString();
     }
 
+    /**
+     * Metodo che genera il codice (di tre lettere) del cognome 
+     * @param cognome cognome del quale di vuole generare il codice
+     * @return codice di tre lettere generato
+     */
+
     private static String generaCodiceCognome(String cognome) {
-        // per evitare errori di input
-        cognome = cognome.toUpperCase();
-        cognome = cognome.trim();
-
+        cognome = cognome.toUpperCase().trim(); // per evitare errori di input
         StringBuffer codiceCognome = new StringBuffer();
-
         StringBuffer cognomeSenzaVocali = new StringBuffer();
 
         for (int i = 0; i < cognome.length(); i++) {
@@ -91,78 +79,99 @@ public class CodiceFiscaleGenerator {
             for (int i = 0; i < 3; i++) {
                 codiceCognome.append(cognomeSenzaVocali.charAt(i));
             }
-        } else {
-            codiceCognome = cognomeSenzaVocali;
-            if (cognome.length() > 2) {
-
-                for (int i = 0; codiceCognome.length() != 3; i++) {
-                    if (!isConsonante(cognome.charAt(i))) {
-                        codiceCognome.append(cognome.charAt(i));
-                    }
-
-                }
-            } else {
-                for (int i = 0; codiceCognome.length() != 3; i++) {
-                    if ((i + 1) <= cognome.length() && !isConsonante(cognome.charAt(i))) {
-                        codiceCognome.append(cognome.charAt(i));
-                    }
-
-                    if ((i + 1) > cognome.length()) {
-                        codiceCognome.append('X');
-                    }
-
-                }
-            }
+        } 
+        
+        else {
+            codiceCognome = menoDiTreConsonanti(cognome, cognomeSenzaVocali);
         }
+
         return codiceCognome.toString();
     }
 
+    /**
+     * Metodo che genera il codice di un nome o cognome nel caso in cui siano presenti meno di tre consonanti
+     * @param stringa nome o cognome del quale si vuole generare il codice
+     * @param stringaSenzaVocali passaggio della parte iniziale del codice, ovvero il nome o cognome privato delle vocali
+     * @return codice di tre lettere generato
+     */
+
+    private static StringBuffer menoDiTreConsonanti(String stringa, StringBuffer stringaSenzaVocali) {
+        StringBuffer codiceStringa;
+        codiceStringa = stringaSenzaVocali;
+
+        if (stringa.length() > 2) {
+            for (int i = 0; codiceStringa.length() != 3; i++) {
+                if (!isConsonante(stringa.charAt(i))) {
+                    codiceStringa.append(stringa.charAt(i));
+                }
+            }
+        } 
+        
+        else {
+            for (int i = 0; codiceStringa.length() != 3; i++) {
+                if ((i + 1) <= stringa.length() && !isConsonante(stringa.charAt(i))) {
+                    codiceStringa.append(stringa.charAt(i));
+                }
+
+                if ((i + 1) > stringa.length()) {
+                    codiceStringa.append('X');
+                }
+            }
+        }
+
+        return codiceStringa;
+    }
+
+    /**
+     * Metodo che genera il codice (di due cifre) dell'anno di nascita
+     * @param dataDiNascita stringa che contiene l'anno di nascita del quale si vuole generare il codice
+     * @return codice di due cifre generato
+     */
     private static String generaCodiceAnno(String dataDiNascita) {
-        // vengono presi i valori da indice 2 a 4 escluso della data di nascita e
-        // convertiti in int
+        //vengono prese le ultime due cifre dell'anno di nascita (posizione 2 e 3)
         String codiceAnno = dataDiNascita.substring(2, 4);
         return codiceAnno;
     }
 
+    /**
+     * Metodo che genera il codice (di una lettera) del mese di nascita
+     * @param dataDiNascita stringa che contiene il mese di nascita del quale si vuole generare il codice
+     * @return codice di una lettera generato
+     */
     private static char generaCodiceMese(String dataDiNascita) {
+
         enum LetteraMese {
-            A, B, C, D, E, H, L, M, P, R, S, T
+            A, B, C, D, E, H, L, M, P, R, S, T;
         }
 
-        // converte in int la data di nascita da posizione 5 a 7 esclusa
+        //converte in intero la stringa del mese di nascita (da posizione 5 inclusa a 7 esclusa)
         int meseDiNascita = Integer.parseInt(dataDiNascita.substring(5, 7));
 
-        // l'int viene usato come indice per accedere al valore Enum desiderato, viene
-        // poi convertito in char
+        //"meseDiNascita" viene usato come indice per accedere al valore Enum corrispondente, poi convertito in char
         char codiceMese = LetteraMese.values()[meseDiNascita - 1].toString().charAt(0);
 
         return codiceMese;
     }
 
+    /**
+     * Metodo che genera il codice (di due cifre) del giorno di nascita
+     * @param dataDiNascita stringa che contiene il giorno di nascita del quale si vuole generare il codice
+     * @param sesso a seconda del sesso viene assegnato il giorno di nascita
+     * @return codice di due cifre generato
+     */
     private static String generaCodiceGiorno(String dataDiNascita, char sesso) {
-        // converte in int le ultime due cifre della data di nascita
-        String codiceGiorno = dataDiNascita.substring(8, 10);
+        //converte in int le ultime due cifre della data di nascita
+        int codiceGiorno = Integer.parseInt(dataDiNascita.substring(8, 10));
 
-        // a seconda del sesso viene assegnato il giorno di nascita
-        if (sesso == 'M') {
-            return codiceGiorno;
-        } else {
-            return String.valueOf(Integer.parseInt(codiceGiorno) + 40);
+        if(sesso == 'M') {
+            return String.valueOf(codiceGiorno);
+        }
+        
+        else {
+            return String.valueOf(codiceGiorno + 40);
         }
     }
 
-    public static String getDataDiNascita(String codiceAnno, char codiceMese, String codiceGiorno) {
-        String dataDiNascita = codiceAnno + "" + codiceMese + "" + codiceGiorno;
-        return dataDiNascita;
-    }
-
-    private static boolean isConsonante(char carattere) {
-        if (carattere == 'A' || carattere == 'E' || carattere == 'I' || carattere == 'O' || carattere == 'U') {
-            return false;
-        } else {
-            return true;
-        }
-    }
 
     private static String generaCodiceComune(String comune) {
         XMLInputFactory xmlif = null;
@@ -234,6 +243,19 @@ public class CodiceFiscaleGenerator {
         ultimaCifra = (char) ((somma % 26) + 65);
 
         return ultimaCifra;
+    }
+
+    public static String getDataDiNascita(String codiceAnno, char codiceMese, String codiceGiorno) {
+        String dataDiNascita = codiceAnno + "" + codiceMese + "" + codiceGiorno;
+        return dataDiNascita;
+    }
+
+    private static boolean isConsonante(char carattere) {
+        if (carattere == 'A' || carattere == 'E' || carattere == 'I' || carattere == 'O' || carattere == 'U') {
+            return false;
+        } else {
+            return true;
+        }
     }
 
 }
