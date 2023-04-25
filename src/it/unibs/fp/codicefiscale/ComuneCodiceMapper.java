@@ -11,7 +11,7 @@ public class ComuneCodiceMapper {
     
     private static Map<String, String> comuneCodiceMap;
 
-    private ComuneCodiceMapper () {}
+    private ComuneCodiceMapper() {}
 
     public static String getCodiceComune(String comune) {
         if(comuneCodiceMap == null) {
