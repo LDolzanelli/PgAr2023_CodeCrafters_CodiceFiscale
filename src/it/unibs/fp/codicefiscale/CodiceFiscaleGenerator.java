@@ -17,6 +17,7 @@ public class CodiceFiscaleGenerator {
         codiceFiscale.append(generaCodiceMese(dataDiNascita));
         codiceFiscale.append(generaCodiceGiorno(dataDiNascita, sesso));
         codiceFiscale.append(generaCodiceComune(comune));
+        codiceFiscale.append(generaCifraControllo(codiceFiscale));
 
         return codiceFiscale.toString();
     }
@@ -116,10 +117,10 @@ public class CodiceFiscaleGenerator {
         return codiceCognome.toString();
     }
 
-    private static int generaCodiceAnno(String dataDiNascita) {
+    private static String generaCodiceAnno(String dataDiNascita) {
         // vengono presi i valori da indice 2 a 4 escluso della data di nascita e
         // convertiti in int
-        int codiceAnno = Integer.parseInt(dataDiNascita.substring(2, 4));
+        String codiceAnno = dataDiNascita.substring(2, 4);
         return codiceAnno;
     }
 
@@ -138,19 +139,19 @@ public class CodiceFiscaleGenerator {
         return codiceMese;
     }
 
-    private static int generaCodiceGiorno(String dataDiNascita, char sesso) {
+    private static String generaCodiceGiorno(String dataDiNascita, char sesso) {
         // converte in int le ultime due cifre della data di nascita
-        int codiceGiorno = Integer.parseInt(dataDiNascita.substring(8, 10));
+        String codiceGiorno = dataDiNascita.substring(8, 10);
 
         // a seconda del sesso viene assegnato il giorno di nascita
         if (sesso == 'M') {
             return codiceGiorno;
         } else {
-            return codiceGiorno + 40;
+            return String.valueOf(Integer.parseInt(codiceGiorno) + 40);
         }
     }
 
-    public static String getDataDiNascita(int codiceAnno, char codiceMese, int codiceGiorno) {
+    public static String getDataDiNascita(String codiceAnno, char codiceMese, String codiceGiorno) {
         String dataDiNascita = codiceAnno + "" + codiceMese + "" + codiceGiorno;
         return dataDiNascita;
     }
@@ -177,16 +178,16 @@ public class CodiceFiscaleGenerator {
 
             boolean trovato = false;
 
-            while (xmlr.hasNext() && !trovato) {     
-                xmlr.nextTag();        
+            while (xmlr.hasNext() && !trovato) {
+                xmlr.nextTag();
                 if (xmlr.isStartElement() && xmlr.getLocalName().equals("nome")) {
                     nomeComune = xmlr.getElementText();
-                    xmlr.nextTag();  
+                    xmlr.nextTag();
                 }
 
                 if (xmlr.isStartElement() && xmlr.getLocalName().equals("codice")) {
                     codiceComune = xmlr.getElementText();
-                    xmlr.nextTag();  
+                    xmlr.nextTag();
                 }
                 if (nomeComune.equalsIgnoreCase(comune)) {
                     trovato = true;
@@ -205,6 +206,34 @@ public class CodiceFiscaleGenerator {
             return "XXXX";
         }
 
+    }
+
+    private static char generaCifraControllo(StringBuffer codiceFiscale) {
+        char ultimaCifra;
+        int[] valoriDispari = { 1, 0, 5, 7, 9, 13, 15, 17, 19, 21, 1, 0, 5, 7, 9, 13, 15, 17, 19, 21, 2, 4, 18, 20, 11,
+                3, 6, 8, 12, 14, 16, 10, 22, 25, 24, 23 };
+
+        double somma = 0;
+
+        for (int i = 0; i < codiceFiscale.length(); i++) {
+            if (Character.isLetter(codiceFiscale.charAt(i))) {
+                if ((i + 1) % 2 == 0) {
+                    somma += (codiceFiscale.charAt(i) - 'A');
+                } else {
+                    somma += valoriDispari[codiceFiscale.charAt(i) - 'A' + 10];
+                }
+            } else {
+                if ((i + 1) % 2 == 0) {
+                    somma += (codiceFiscale.charAt(i) - '0');
+                } else {
+                    somma += valoriDispari[codiceFiscale.charAt(i) - '0'];
+                }
+            }
+        }
+
+        ultimaCifra = (char) ((somma % 26) + 65);
+
+        return ultimaCifra;
     }
 
 }
