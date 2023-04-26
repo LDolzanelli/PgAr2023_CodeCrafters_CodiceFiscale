@@ -2,24 +2,32 @@
 package it.unibs.fp.codicefiscale;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
-
+import java.util.stream.Stream;
+import javax.imageio.stream.FileCacheImageOutputStream;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.xml.sax.XMLReader;
 
 public class CodiceFiscaleMain {
     // Stringa di comando per "pulire" la console
     public static final String FLUSH = "\033[H\033[2J";
     private static ArrayList<Persona> persone = new ArrayList<Persona>();
+    private static ArrayList<Persona> personeAssenti = new ArrayList<Persona>();
+    private static ArrayList<String> codiciFiscaliNonPresenti = new ArrayList<String>();
 
     public static void main(String[] args) {
-        //String codiceFiscale = CodiceFiscaleGenerator.generaCodiceFiscale("SINGH", "RAJDEEP", "2003-10-25", 'M',
-          //      "BRESCIA");
-        //System.out.println(codiceFiscale);
 
-        //leggiPersone();
+        leggiPersone();
+        leggiCF();
+        checkPersonePresenti();
 
-        System.out.println(CodiceFiscaleChecker.checkCodiceFiscale("DLZLNZ99A21B157X"));
+
 
     }
 
@@ -37,8 +45,7 @@ public class CodiceFiscaleMain {
             xmlif = XMLInputFactory.newInstance();
             xmlr = xmlif.createXMLStreamReader("inputXmlFiles/InputPersone.xml",
                     new FileInputStream("inputXmlFiles/InputPersone.xml"));
-                    
-            
+
             while (xmlr.hasNext()) {
 
                 xmlr.nextTag();
@@ -68,19 +75,160 @@ public class CodiceFiscaleMain {
                     }
                 }
 
-                if(xmlr.nextTag() == XMLStreamReader.END_ELEMENT && xmlr.getLocalName().equals("persona"))
-                {
+                if (xmlr.getEventType() == XMLStreamReader.END_ELEMENT && xmlr.getLocalName().equals("persona")) {
                     Persona persona = new Persona(nome, cognome, dataDiNascita, luogoDiNascita, sesso);
                     persone.add(persona);
                 }
 
             }
+            xmlr.close();
 
         } catch (Exception e) {
             System.out.println("Errore nell'inizializzazione del reader:");
             System.out.println(e.getMessage());
+            System.out.println(FLUSH);
         }
 
     }
 
+    public static void leggiCF() {
+
+        try {
+            XMLInputFactory xmlif = XMLInputFactory.newInstance();
+            XMLStreamReader xmlr = xmlif.createXMLStreamReader("inputXmlFiles/CodiciFiscali.xml",
+                    new FileInputStream("inputXmlFiles/CodiciFiscali.xml"));
+
+            while (xmlr.hasNext()) {
+                xmlr.nextTag();
+                if (xmlr.isStartElement() && xmlr.getLocalName() == "codice") {
+                    codiciFiscaliNonPresenti.add(xmlr.getElementText());
+
+                }
+            }
+            xmlr.close();
+
+        } catch (Exception e) {
+            System.out.println("Errore nell'inizializzazione del reader:");
+            System.out.println(e.getMessage());
+            System.out.println(FLUSH);
+        }
+    }
+
+    public static void checkPersonePresenti() {
+        for (int i = 0; i < persone.size(); i++) {
+            for (int j = 0; j < codiciFiscaliNonPresenti.size(); j++) {
+                if (persone.get(i).getCodiceFiscale().equals(codiciFiscaliNonPresenti.get(j))) {
+                    codiciFiscaliNonPresenti.remove(j);
+                    break;
+                }
+
+                if (j == codiciFiscaliNonPresenti.size() - 1) {
+                    personeAssenti.add(persone.get(i));
+                    persone.remove(i);
+                    i--;
+                }
+            }
+        }
+    }
+
+    public static void creaFileXml() {
+
+        XMLOutputFactory xmlof = null;
+        XMLStreamWriter xmlw = null;
+
+        try {
+        xmlof = XMLOutputFactory.newInstance();
+        xmlw = xmlof.createXMLStreamWriter(new FileOutputStream("outputXmlFiles/codiciPersone.xml"), "utf-8");
+        xmlw.writeStartDocument("utf-8", "1.0");
+
+        xmlw.writeStartElement("output");
+        xmlw.writeStartElement("persone");
+        xmlw.writeAttribute("numero",String.format("%d", persone.size()));
+
+        for (int i = 0; i < persone.size(); i++) {
+            xmlw.writeStartElement("persona");
+            xmlw.writeAttribute("id",String.format("%d", i));
+            //nome
+            xmlw.writeStartElement("nome");
+            xmlw.writeCharacters(persone.get(i).getNome());
+            xmlw.writeEndElement();
+
+            //cognome
+            xmlw.writeStartElement("cognome");
+            xmlw.writeCharacters(persone.get(i).getCognome());
+            xmlw.writeEndElement();
+
+            //sesso
+            xmlw.writeStartElement("sesso");
+            xmlw.writeCharacters(String.valueOf(persone.get(i).getSesso()));
+            xmlw.writeEndElement();
+
+            //comune di nascita
+            xmlw.writeStartElement("comune_nascita");
+            xmlw.writeCharacters(persone.get(i).getLuogoDiNascita());
+            xmlw.writeEndElement();
+
+            //data di nascita
+            xmlw.writeStartElement("data_nascita");
+            xmlw.writeCharacters(persone.get(i).getDataDiNascita());
+            xmlw.writeEndElement();
+
+            //codice fiscale
+            xmlw.writeStartElement("codice_fiscale");
+            xmlw.writeCharacters(persone.get(i).getCodiceFiscale());
+            xmlw.writeEndElement();
+
+            xmlw.writeEndElement();
+
+        }
+
+        for (int i = 0; i < personeAssenti.size(); i++) {
+            xmlw.writeStartElement("persona");
+            xmlw.writeAttribute("id",String.format("%d", i));
+            //nome
+            xmlw.writeStartElement("nome");
+            xmlw.writeCharacters(personeAssenti.get(i).getNome());
+            xmlw.writeEndElement();
+
+            //cognome
+            xmlw.writeStartElement("cognome");
+            xmlw.writeCharacters(personeAssenti.get(i).getCognome());
+            xmlw.writeEndElement();
+
+            //sesso
+            xmlw.writeStartElement("sesso");
+            xmlw.writeCharacters(String.valueOf(personeAssenti.get(i).getSesso()));
+            xmlw.writeEndElement();
+
+            //comune di nascita
+            xmlw.writeStartElement("comune_nascita");
+            xmlw.writeCharacters(personeAssenti.get(i).getLuogoDiNascita());
+            xmlw.writeEndElement();
+
+            //data di nascita
+            xmlw.writeStartElement("data_nascita");
+            xmlw.writeCharacters(personeAssenti.get(i).getDataDiNascita());
+            xmlw.writeEndElement();
+
+            //codice fiscale
+            xmlw.writeStartElement("codice_fiscale");
+            xmlw.writeCharacters("ASSENTE");
+            xmlw.writeEndElement();
+
+            xmlw.writeEndElement();
+
+        }
+
+        xmlw.writeEndElement();
+        xmlw.writeEndElement();
+
+        xmlw.writeEndDocument();
+
+
+
+        } catch (Exception e) {
+        System.out.println("Errore nell'inizializzazione del writer:");
+        System.out.println(e.getMessage());
+        }
+    }
 }
