@@ -22,7 +22,7 @@ public class CodiceFiscaleGenerator {
     }
 
     /**
-     * Metodo che genera il codice (di tre lettere) del nome 
+     * Genera il codice (di tre lettere) del nome 
      * @param nome nome del quale di vuole generare il codice
      * @return codice di tre lettere generato
      */
@@ -57,7 +57,7 @@ public class CodiceFiscaleGenerator {
     }
 
     /**
-     * Metodo che genera il codice (di tre lettere) del cognome 
+     * Genera il codice (di tre lettere) del cognome 
      * @param cognome cognome del quale di vuole generare il codice
      * @return codice di tre lettere generato
      */
@@ -88,7 +88,7 @@ public class CodiceFiscaleGenerator {
     }
 
     /**
-     * Metodo che genera il codice di un nome o cognome nel caso in cui siano presenti meno di tre consonanti
+     * Genera il codice di un nome o cognome nel caso in cui siano presenti meno di tre consonanti
      * @param stringa nome o cognome del quale si vuole generare il codice
      * @param stringaSenzaVocali passaggio della parte iniziale del codice, ovvero il nome o cognome privato delle vocali
      * @return codice di tre lettere generato
@@ -122,7 +122,7 @@ public class CodiceFiscaleGenerator {
     }
 
     /**
-     * Metodo che genera il codice (di due cifre) dell'anno di nascita
+     * Genera il codice (di due cifre) dell'anno di nascita
      * @param dataDiNascita stringa che contiene l'anno di nascita del quale si vuole generare il codice
      * @return codice di due cifre generato
      */
@@ -133,7 +133,7 @@ public class CodiceFiscaleGenerator {
     }
 
     /**
-     * Metodo che genera il codice (di una lettera) del mese di nascita
+     * Genera il codice (di una lettera) del mese di nascita
      * @param dataDiNascita stringa che contiene il mese di nascita del quale si vuole generare il codice
      * @return codice di una lettera generato
      */
@@ -153,7 +153,7 @@ public class CodiceFiscaleGenerator {
     }
 
     /**
-     * Metodo che genera il codice (di due cifre) del giorno di nascita
+     * Genera il codice (di due cifre) del giorno di nascita
      * @param dataDiNascita stringa che contiene il giorno di nascita del quale si vuole generare il codice
      * @param sesso a seconda del sesso viene assegnato il giorno di nascita
      * @return codice di due cifre generato
@@ -171,7 +171,11 @@ public class CodiceFiscaleGenerator {
         }
     }
 
-
+    /**
+     * Genera il codice di un comune caricando in memoria il file Comuni.xml
+     * @param comune il comune di nascita della persona
+     * @return il codice associato al comune
+     */
     private static String generaCodiceComune(String comune) {
         XMLInputFactory xmlif = null;
         XMLStreamReader xmlr = null;
@@ -216,6 +220,12 @@ public class CodiceFiscaleGenerator {
 
     }
 
+    /**
+     * Genera il codice finale di controllo del codice fiscale come da algoritmo ufficiale
+     * @param codiceFiscale il codice fiscale generato fino all'ultimo parametro (che deve essere generato)
+     * @return il carattere finale del codice fiscale
+     */
+
     public static char generaCifraControllo(StringBuffer codiceFiscale) {
         char ultimaCifra;
         int[] valoriDispari = { 1, 0, 5, 7, 9, 13, 15, 17, 19, 21, 1, 0, 5, 7, 9, 13, 15, 17, 19, 21, 2, 4, 18, 20, 11,
@@ -244,10 +254,11 @@ public class CodiceFiscaleGenerator {
         return ultimaCifra;
     }
 
-    public static String getDataDiNascita(String codiceAnno, char codiceMese, String codiceGiorno) {
-        String dataDiNascita = codiceAnno + "" + codiceMese + "" + codiceGiorno;
-        return dataDiNascita;
-    }
+        /**
+     * Controlla se un certo carattere è una consonante
+     * @param carattere il carattere da controllare
+     * @return true se è consonante, false se è vocale
+     */
 
     public static boolean isConsonante(char carattere) {
         if (carattere == 'A' || carattere == 'E' || carattere == 'I' || carattere == 'O' || carattere == 'U') {
