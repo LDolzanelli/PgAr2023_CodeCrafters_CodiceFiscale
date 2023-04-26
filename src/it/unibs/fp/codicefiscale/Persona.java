@@ -2,7 +2,7 @@ package it.unibs.fp.codicefiscale;
 
 public class Persona {
 
-    private String nome, cognome,dataDiNascita, luogoDiNascita;
+    private String nome, cognome, dataDiNascita, luogoDiNascita;
     private char sesso;
     private String codiceFiscale;
     public Persona(String nome, String cognome, String dataDiNascita, String luogoDiNascita, char sesso) {

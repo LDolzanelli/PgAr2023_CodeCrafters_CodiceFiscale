@@ -79,8 +79,6 @@ public class CodiceFiscaleMain {
             System.out.println(e.getMessage());
         }
 
-        Persona persona = new Persona(nome, cognome, dataDiNascita, luogoDiNascita, sesso);
-
     }
 
 }
