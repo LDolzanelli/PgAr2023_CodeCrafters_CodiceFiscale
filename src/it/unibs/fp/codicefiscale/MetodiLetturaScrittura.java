@@ -11,6 +11,10 @@ import javax.xml.stream.XMLStreamWriter;
 
 public class MetodiLetturaScrittura {
 
+    /*
+     * Metodo che serve per leggere tutti i dati delle persone del file "InputPersone.xml" 
+     * e restiturli tramite un ArrayList
+     */
     public static ArrayList<Persona> leggiPersone() {
 
         ArrayList<Persona> persone = new ArrayList<Persona>();
@@ -84,6 +88,10 @@ public class MetodiLetturaScrittura {
 
     }
 
+    /*
+     * Metodo che serve per leggere tutti i codici fiscali del file "Comuni.xml"
+     * e restituirli tramite un ArrayList
+     */
     public static ArrayList<String> leggiCF() {
 
         ArrayList<String> codiciFiscali = new ArrayList<String>();
@@ -118,6 +126,13 @@ public class MetodiLetturaScrittura {
         return codiciFiscali;
     }
 
+    /**
+     * Medodo che serve per generare il file di ouput "codiciPersone.xml", il quale conterrà:
+     * @param PersonePresenti Tutti i dati delle persone con il rispettivo codice fiscale se è presente in "codiciFiscali.xml"
+     * @param PersoneAssenti Nel caso in cui non sia presente il codice fiscale viene mostrata la dicitura ASSENTE
+     * @param codiciFiscaliErrati il file di output conterrà anche i codici fiscali invalidi
+     * @param codiciFiscaliSpaiati il file di output conterrà anche i codici fiscali spaiati
+     */
     public static void creaFileXml(ArrayList<Persona> PersonePresenti, ArrayList<Persona> PersoneAssenti,
             ArrayList<String> codiciFiscaliErrati, ArrayList<String> codiciFiscaliSpaiati) {
 

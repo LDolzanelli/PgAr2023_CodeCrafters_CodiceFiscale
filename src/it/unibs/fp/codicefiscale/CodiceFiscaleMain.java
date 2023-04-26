@@ -12,15 +12,19 @@ public class CodiceFiscaleMain {
     private static ArrayList<String> codiciFiscaliErrati = new ArrayList<String>();
 
     public static void main(String[] args) {
-
         persone = MetodiLetturaScrittura.leggiPersone();
         codiciFiscali = MetodiLetturaScrittura.leggiCF();
         checkPersonePresenti();
         checkCodiciFiscali();
         MetodiLetturaScrittura.creaFileXml(persone, personeAssenti, codiciFiscaliErrati, codiciFiscaliSpaiati);
-
     }
 
+    /*
+     * Metodo che salva le persone in due ArrayList diverse:
+     * in "persone" se le persone hanno il codice fiscale (generato) presente nel file "CodiciFiscali.xml";
+     * in "personeAssenti" se le persone hanno il codice fiscale (generato) NON presente nel file "CodiciFiscali.xml",
+     * inoltre, l'ArrayList "codiciFiscali" conterrà solo codici fiscali (generati) NON presenti nel file "CodiciFiscali.xml".
+     */
     public static void checkPersonePresenti() {
         for (int i = 0; i < persone.size(); i++) {
             for (int j = 0; j < codiciFiscali.size(); j++) {
@@ -37,6 +41,12 @@ public class CodiceFiscaleMain {
             }
         }
     }
+
+    /*
+     * Metodo che salva i codici fiscali (generati) NON presenti nel file "CodiciFiscali.xml" in due ArrayList diverse:
+     * in "codiciFiscaliSpaiati" se il codice fiscale è spaiato
+     * in "codiciFiscaliErrati" se il codice fiscale non è valido
+     */
 
     public static void checkCodiciFiscali() {
         for (int i = 0; i < codiciFiscali.size(); i++) {
