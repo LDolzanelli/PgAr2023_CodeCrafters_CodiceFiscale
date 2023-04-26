@@ -3,19 +3,27 @@ package it.unibs.fp.codicefiscale;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.stream.Stream;
 
+import javax.imageio.stream.FileCacheImageOutputStream;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
+
+import org.xml.sax.XMLReader;
 
 public class CodiceFiscaleMain {
     // Stringa di comando per "pulire" la console
     public static final String FLUSH = "\033[H\033[2J";
     private static ArrayList<Persona> persone = new ArrayList<Persona>();
+    private static ArrayList<Persona> personeAssenti = new ArrayList<Persona>();
+    private static ArrayList<String> inputCodiciFiscali = new ArrayList<String>();
 
     public static void main(String[] args) {
 
         leggiPersone();
-        //prova push 
+        leggiCF();
+        
 
     }
 
@@ -69,12 +77,38 @@ public class CodiceFiscaleMain {
                 }
 
             }
+            xmlr.close();
 
         } catch (Exception e) {
             System.out.println("Errore nell'inizializzazione del reader:");
             System.out.println(e.getMessage());
+            System.out.println(FLUSH);
         }
 
     }
 
+    public static void leggiCF() {
+
+        try {
+            XMLInputFactory xmlif = XMLInputFactory.newInstance();
+            XMLStreamReader xmlr = xmlif.createXMLStreamReader("inputXmlFiles/CodiciFiscali.xml",
+                    new FileInputStream("inputXmlFiles/CodiciFiscali.xml"));
+
+            while (xmlr.hasNext()) {
+                xmlr.nextTag();
+                if (xmlr.isStartElement() && xmlr.getLocalName() == "codice") {
+                    inputCodiciFiscali.add(xmlr.getElementText());
+
+                }
+            }
+            xmlr.close();
+
+        } catch (Exception e) {
+            System.out.println("Errore nell'inizializzazione del reader:");
+            System.out.println(e.getMessage());
+            System.out.println(FLUSH);
+        }
+    }
+
+    
 }

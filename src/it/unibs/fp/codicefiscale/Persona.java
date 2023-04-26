@@ -45,5 +45,9 @@ public class Persona {
         this.sesso = sesso;
     }
 
+    public String getCodiceFiscale() {
+        return codiceFiscale;
+    }
+
     
 }
