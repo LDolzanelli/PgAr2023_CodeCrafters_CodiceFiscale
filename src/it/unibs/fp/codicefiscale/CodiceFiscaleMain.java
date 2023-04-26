@@ -17,7 +17,9 @@ public class CodiceFiscaleMain {
           //      "BRESCIA");
         //System.out.println(codiceFiscale);
 
-        leggiPersone();
+        //leggiPersone();
+
+        System.out.println(CodiceFiscaleChecker.checkCodiceFiscale("DLZLNZ99A21B157X"));
 
     }
 
