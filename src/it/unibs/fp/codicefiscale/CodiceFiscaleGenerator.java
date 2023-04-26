@@ -195,7 +195,7 @@ public class CodiceFiscaleGenerator {
         XMLInputFactory xmlif = null;
         XMLStreamReader xmlr = null;
 
-        //lettura del file Comuni.xml
+        // lettura del file Comuni.xml
 
         try {
             xmlif = XMLInputFactory.newInstance();
@@ -220,13 +220,15 @@ public class CodiceFiscaleGenerator {
                     xmlr.nextTag();
                 }
 
-                //se il il nome del comune che si sta cercando è uguale a quello dato in ingresso allora esce dal ciclo
+                // se il il nome del comune che si sta cercando è uguale a quello dato in
+                // ingresso allora esce dal ciclo
                 if (nomeComune.equalsIgnoreCase(comune)) {
                     trovato = true;
                 }
             }
 
-            //da come return l'ultimo codice letto  e se non trova nessun comune con qeusto nome da XXXX
+            // da come return l'ultimo codice letto e se non trova nessun comune con qeusto
+            // nome da XXXX
             if (trovato) {
                 return codiceComune;
             } else {
