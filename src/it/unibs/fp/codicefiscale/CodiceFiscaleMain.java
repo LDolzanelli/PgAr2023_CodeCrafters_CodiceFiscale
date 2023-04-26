@@ -4,15 +4,11 @@ package it.unibs.fp.codicefiscale;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.stream.Stream;
-import javax.imageio.stream.FileCacheImageOutputStream;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.xml.sax.XMLReader;
 
 public class CodiceFiscaleMain {
     // Stringa di comando per "pulire" la console
