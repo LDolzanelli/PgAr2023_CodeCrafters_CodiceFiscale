@@ -216,7 +216,7 @@ public class CodiceFiscaleGenerator {
 
     }
 
-    private static char generaCifraControllo(StringBuffer codiceFiscale) {
+    public static char generaCifraControllo(StringBuffer codiceFiscale) {
         char ultimaCifra;
         int[] valoriDispari = { 1, 0, 5, 7, 9, 13, 15, 17, 19, 21, 1, 0, 5, 7, 9, 13, 15, 17, 19, 21, 2, 4, 18, 20, 11,
                 3, 6, 8, 12, 14, 16, 10, 22, 25, 24, 23 };
@@ -249,7 +249,7 @@ public class CodiceFiscaleGenerator {
         return dataDiNascita;
     }
 
-    private static boolean isConsonante(char carattere) {
+    public static boolean isConsonante(char carattere) {
         if (carattere == 'A' || carattere == 'E' || carattere == 'I' || carattere == 'O' || carattere == 'U') {
             return false;
         } else {
