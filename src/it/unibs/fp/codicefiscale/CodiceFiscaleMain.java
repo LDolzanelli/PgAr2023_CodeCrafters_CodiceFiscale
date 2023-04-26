@@ -13,9 +13,6 @@ public class CodiceFiscaleMain {
     private static ArrayList<Persona> persone = new ArrayList<Persona>();
 
     public static void main(String[] args) {
-        //String codiceFiscale = CodiceFiscaleGenerator.generaCodiceFiscale("SINGH", "RAJDEEP", "2003-10-25", 'M',
-          //      "BRESCIA");
-        //System.out.println(codiceFiscale);
 
         leggiPersone();
 
@@ -35,8 +32,7 @@ public class CodiceFiscaleMain {
             xmlif = XMLInputFactory.newInstance();
             xmlr = xmlif.createXMLStreamReader("inputXmlFiles/InputPersone.xml",
                     new FileInputStream("inputXmlFiles/InputPersone.xml"));
-                    
-            
+
             while (xmlr.hasNext()) {
 
                 xmlr.nextTag();
@@ -66,8 +62,7 @@ public class CodiceFiscaleMain {
                     }
                 }
 
-                if(xmlr.nextTag() == XMLStreamReader.END_ELEMENT && xmlr.getLocalName().equals("persona"))
-                {
+                if (xmlr.getEventType() == XMLStreamReader.END_ELEMENT && xmlr.getLocalName().equals("persona")) {
                     Persona persona = new Persona(nome, cognome, dataDiNascita, luogoDiNascita, sesso);
                     persone.add(persona);
                 }

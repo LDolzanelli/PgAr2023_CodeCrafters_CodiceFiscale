@@ -181,8 +181,8 @@ public class CodiceFiscaleGenerator {
             xmlr = xmlif.createXMLStreamReader("inputXmlFiles/Comuni.xml",
                     new FileInputStream("inputXmlFiles/Comuni.xml"));
 
-            String nomeComune = null;
-            String codiceComune = null;
+            String nomeComune = "";
+            String codiceComune = "";
 
             boolean trovato = false;
 
