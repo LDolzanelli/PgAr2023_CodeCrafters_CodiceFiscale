@@ -2,13 +2,15 @@
 package it.unibs.fp.codicefiscale;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.stream.Stream;
-
 import javax.imageio.stream.FileCacheImageOutputStream;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.xml.sax.XMLReader;
 
@@ -24,6 +26,18 @@ public class CodiceFiscaleMain {
         leggiPersone();
         leggiCF();
         checkPersonePresenti();
+
+        XMLOutputFactory xmlof = null;
+        XMLStreamWriter xmlw = null;
+        try {
+        xmlof = XMLOutputFactory.newInstance();
+        xmlw = xmlof.createXMLStreamWriter(new FileOutputStream(""), "utf-8");
+        xmlw.writeStartDocument("utf-8", "1.0");
+        } catch (Exception e) {
+        System.out.println("Errore nell'inizializzazione del writer:");
+        System.out.println(e.getMessage());
+        }
+
 
     }
 
@@ -110,20 +124,15 @@ public class CodiceFiscaleMain {
         }
     }
 
-    public static void checkPersonePresenti()
-    {
-        for(int i= 0; i<persone.size(); i++)
-        {
-            for(int j = 0; j< codiciFiscaliNonPresenti.size(); j++)
-            {
-                if(persone.get(i).getCodiceFiscale().equals(codiciFiscaliNonPresenti.get(j)))
-                {
+    public static void checkPersonePresenti() {
+        for (int i = 0; i < persone.size(); i++) {
+            for (int j = 0; j < codiciFiscaliNonPresenti.size(); j++) {
+                if (persone.get(i).getCodiceFiscale().equals(codiciFiscaliNonPresenti.get(j))) {
                     codiciFiscaliNonPresenti.remove(j);
                     break;
                 }
 
-                if (j == codiciFiscaliNonPresenti.size()-1)
-                {
+                if (j == codiciFiscaliNonPresenti.size() - 1) {
                     personeAssenti.add(persone.get(i));
                     persone.remove(i);
                     i--;
@@ -131,6 +140,5 @@ public class CodiceFiscaleMain {
             }
         }
     }
-
 
 }
