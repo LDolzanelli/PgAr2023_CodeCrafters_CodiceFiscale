@@ -10,12 +10,15 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 
+
 public class CodiceFiscaleMain {
     // Stringa di comando per "pulire" la console
     public static final String FLUSH = "\033[H\033[2J";
     private static ArrayList<Persona> persone = new ArrayList<Persona>();
     private static ArrayList<Persona> personeAssenti = new ArrayList<Persona>();
     private static ArrayList<String> codiciFiscaliNonPresenti = new ArrayList<String>();
+    private static ArrayList<String> codiciFiscaliSpaiati = new ArrayList<String>();
+    private static ArrayList<String> codiciFiscaliErrati = new ArrayList<String>();
 
     public static void main(String[] args) {
 
@@ -23,6 +26,7 @@ public class CodiceFiscaleMain {
         leggiCF();
         checkPersonePresenti();
         creaFileXml();
+        checkCodiciFiscali(codiciFiscaliNonPresenti);
 
     }
 
@@ -278,5 +282,14 @@ public class CodiceFiscaleMain {
         }
     }
 
-
+    public static void checkCodiciFiscali(ArrayList<String> codiciFiscali) {
+        for(int i = 0; i < codiciFiscali.size(); i++) {
+            if(CodiceFiscaleChecker.checkCodiceFiscale(codiciFiscali.get(i))) {
+                codiciFiscaliSpaiati.add(codiciFiscali.get(i));
+            }
+            else {
+                codiciFiscaliErrati.add(codiciFiscali.get(i));
+            }
+        }
+    }
 }
