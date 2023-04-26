@@ -25,6 +25,7 @@ public class CodiceFiscaleMain {
         checkPersonePresenti();
         checkCodiciFiscali(codiciFiscaliNonPresenti);
         creaFileXml();
+
     }
 
     public static void leggiPersone() {
