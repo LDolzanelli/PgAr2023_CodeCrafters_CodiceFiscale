@@ -9,8 +9,6 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
-
-
 public class CodiceFiscaleMain {
     // Stringa di comando per "pulire" la console
     public static final String FLUSH = "\033[H\033[2J";
@@ -25,9 +23,8 @@ public class CodiceFiscaleMain {
         leggiPersone();
         leggiCF();
         checkPersonePresenti();
-        creaFileXml();
         checkCodiciFiscali(codiciFiscaliNonPresenti);
-
+        creaFileXml();
     }
 
     public static void leggiPersone() {
@@ -267,11 +264,60 @@ public class CodiceFiscaleMain {
             xmlw.writeCharacters("\t");
 
             xmlw.writeEndElement();
-            xmlw.writeCharacters("\n");
-            xmlw.writeEndElement();
+
             xmlw.writeCharacters("\n");
 
-            xmlw.writeEndDocument();
+            xmlw.writeCharacters("\t");
+
+            xmlw.writeStartElement("codici");
+            xmlw.writeCharacters("\n");
+            xmlw.writeCharacters("\t\t");
+
+            xmlw.writeStartElement("invalidi"); // inizio codici fiscali invalidi
+            xmlw.writeAttribute("numero", String.format("%d", codiciFiscaliErrati.size())); // Attributo codici invalidi
+
+            // stampa codici fiscali invalidi
+            for (int i = 0; i < codiciFiscaliErrati.size(); i++) {
+                xmlw.writeCharacters("\n");
+                xmlw.writeCharacters("\t\t\t");
+                xmlw.writeStartElement("codice");
+                xmlw.writeCharacters(codiciFiscaliErrati.get(i));
+                xmlw.writeEndElement();
+
+            }
+
+            xmlw.writeCharacters("\n");
+            xmlw.writeCharacters("\t\t");
+
+            xmlw.writeEndElement();// fine codici invalidi
+
+            xmlw.writeCharacters("\n");
+            xmlw.writeCharacters("\t\t");
+
+            xmlw.writeStartElement("spaiati"); // inizio codici fiscali spaiati
+            xmlw.writeAttribute("numero", String.format("%d", codiciFiscaliSpaiati.size())); // Attributo codici spaiati
+
+            // stampa codici fiscali spaiati
+            for (int i = 0; i < codiciFiscaliSpaiati.size(); i++) {
+                xmlw.writeCharacters("\n");
+                xmlw.writeCharacters("\t\t\t");
+                xmlw.writeStartElement("codice");
+                xmlw.writeCharacters(codiciFiscaliSpaiati.get(i));
+                xmlw.writeEndElement();
+            }
+
+            xmlw.writeCharacters("\n");
+            xmlw.writeCharacters("\t\t");
+
+            xmlw.writeEndElement();// fine codici spaiati
+            xmlw.writeCharacters("\n");
+            xmlw.writeCharacters("\t");
+            xmlw.writeEndElement();// fine codici fiscali invalidi e spaiati
+
+            xmlw.writeCharacters("\n");
+            xmlw.writeEndElement();// fine output
+
+            xmlw.writeEndDocument();// fine documento
 
             xmlw.flush();
             xmlw.close();
@@ -283,11 +329,10 @@ public class CodiceFiscaleMain {
     }
 
     public static void checkCodiciFiscali(ArrayList<String> codiciFiscali) {
-        for(int i = 0; i < codiciFiscali.size(); i++) {
-            if(CodiceFiscaleChecker.checkCodiceFiscale(codiciFiscali.get(i))) {
+        for (int i = 0; i < codiciFiscali.size(); i++) {
+            if (CodiceFiscaleChecker.checkCodiceFiscale(codiciFiscali.get(i))) {
                 codiciFiscaliSpaiati.add(codiciFiscali.get(i));
-            }
-            else {
+            } else {
                 codiciFiscaliErrati.add(codiciFiscali.get(i));
             }
         }
