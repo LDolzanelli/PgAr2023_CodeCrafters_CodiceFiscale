@@ -17,13 +17,13 @@ public class CodiceFiscaleMain {
     public static final String FLUSH = "\033[H\033[2J";
     private static ArrayList<Persona> persone = new ArrayList<Persona>();
     private static ArrayList<Persona> personeAssenti = new ArrayList<Persona>();
-    private static ArrayList<String> inputCodiciFiscali = new ArrayList<String>();
+    private static ArrayList<String> codiciFiscaliNonPresenti = new ArrayList<String>();
 
     public static void main(String[] args) {
 
         leggiPersone();
         leggiCF();
-        
+        checkPersonePresenti();
 
     }
 
@@ -97,7 +97,7 @@ public class CodiceFiscaleMain {
             while (xmlr.hasNext()) {
                 xmlr.nextTag();
                 if (xmlr.isStartElement() && xmlr.getLocalName() == "codice") {
-                    inputCodiciFiscali.add(xmlr.getElementText());
+                    codiciFiscaliNonPresenti.add(xmlr.getElementText());
 
                 }
             }
@@ -110,5 +110,27 @@ public class CodiceFiscaleMain {
         }
     }
 
-    
+    public static void checkPersonePresenti()
+    {
+        for(int i= 0; i<persone.size(); i++)
+        {
+            for(int j = 0; j< codiciFiscaliNonPresenti.size(); j++)
+            {
+                if(persone.get(i).getCodiceFiscale().equals(codiciFiscaliNonPresenti.get(j)))
+                {
+                    codiciFiscaliNonPresenti.remove(j);
+                    break;
+                }
+
+                if (j == codiciFiscaliNonPresenti.size()-1)
+                {
+                    personeAssenti.add(persone.get(i));
+                    persone.remove(i);
+                    i--;
+                }
+            }
+        }
+    }
+
+
 }
