@@ -177,7 +177,12 @@ public class CodiceFiscaleGenerator {
         int codiceGiorno = Integer.parseInt(dataDiNascita.substring(8, 10));
 
         if (sesso == 'M') {
-            return String.valueOf(codiceGiorno);
+            if (codiceGiorno < 10) {
+                return String.format("0%d", codiceGiorno);
+            } else {
+                return String.valueOf(codiceGiorno);
+            }
+
         }
 
         else {
